@@ -80,4 +80,9 @@ public class UserController {
         log.info("입력받은 정보 : {}", id );
         return ResponseEntity.ok(service.existById(id));
     }
+    @GetMapping("/exists-username")
+    public ResponseEntity<Boolean> existsByUsername(@RequestParam("username") String username){
+        log.info("입력받은 정보 : {}", username );
+        return ResponseEntity.ok(service.existsByUsername(username));
+    }
 }

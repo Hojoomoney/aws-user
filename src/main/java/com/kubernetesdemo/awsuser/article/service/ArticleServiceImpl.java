@@ -21,7 +21,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Messenger save(ArticleDto t) throws SQLException {
-        ArticleDto dto = entityToDto(repository.save(dtoToEntity(t,boardRepository)));
+        repository.save(dtoToEntity(t,boardRepository));
         return Messenger.builder()
                 .message(repository.existsByTitle(t.getTitle()) ? "SUCCESS"  : "FAILURE")
                 .build();

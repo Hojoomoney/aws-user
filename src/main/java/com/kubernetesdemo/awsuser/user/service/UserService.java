@@ -39,4 +39,6 @@ public interface UserService extends CommandService<UserDto>, QueryService<UserD
                 .job(ent.getJob())
                 .build();
     }
+
+    Boolean existsByUsername(String username);
 }

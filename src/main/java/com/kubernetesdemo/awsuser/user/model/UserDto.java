@@ -27,5 +27,6 @@ public class UserDto {
     private String job;
     private LocalDateTime regDate;
     private LocalDateTime modDate;
+    private String token;
     private List<Article> articles;
 }
