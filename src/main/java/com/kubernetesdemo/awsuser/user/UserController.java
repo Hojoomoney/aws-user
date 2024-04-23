@@ -70,19 +70,17 @@ public class UserController {
         return ResponseEntity.ok(service.findUsersByName(param.getName()));
     }
 
-    @PostMapping(path = "/login")
-    public ResponseEntity<Messenger> login(@RequestBody UserDto param) {
-        log.info("입력받은 정보 : {}", param );
-        return ResponseEntity.ok(service.login(param));
-    }
     @GetMapping(path = "/exists")
     public ResponseEntity<Boolean> existById(@RequestParam Long id){
         log.info("입력받은 정보 : {}", id );
         return ResponseEntity.ok(service.existById(id));
     }
-    @GetMapping("/exists-username")
-    public ResponseEntity<Boolean> existsByUsername(@RequestParam("username") String username){
-        log.info("입력받은 정보 : {}", username );
-        return ResponseEntity.ok(service.existsByUsername(username));
+
+    @GetMapping("/logout")
+    public ResponseEntity<Boolean> logout(@RequestHeader("Authorization") String accessToken){
+        log.info("logout request : {}", accessToken);
+        Long id = 1L;
+        Boolean flag = service.logout(id);
+        return ResponseEntity.ok(flag);
     }
 }

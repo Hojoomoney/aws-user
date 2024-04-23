@@ -124,7 +124,7 @@ public class UserServiceImpl implements UserService {
         String accessToken = jwtProvider.createToken(entityToDto(user));
         repository.modifyTokenById(user.getId(), accessToken);
 
-        jwtProvider.getPayload(accessToken);
+        jwtProvider.printPayload(accessToken);
         log.info("Flag : " + flag);
         return Messenger.builder()
                 .message(flag ? "SUCCESS" : "FAILURE")
@@ -137,5 +137,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean existsByUsername(String username) {
         return repository.existsByUsername(username);
+    }
+
+    @Override
+    public Boolean logout(Long id) {
+        return true;
     }
 }

@@ -41,4 +41,6 @@ public interface UserService extends CommandService<UserDto>, QueryService<UserD
     }
 
     Boolean existsByUsername(String username);
+
+    Boolean logout(Long id);
 }

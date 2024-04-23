@@ -1,9 +1,9 @@
-package com.kubernetesdemo.awsuser.common.security.model;
+package com.kubernetesdemo.awsuser.user;
 
 
 import com.kubernetesdemo.awsuser.common.component.Messenger;
-import com.kubernetesdemo.awsuser.common.security.service.AuthService;
 import com.kubernetesdemo.awsuser.user.model.UserDto;
+import com.kubernetesdemo.awsuser.user.service.UserService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +20,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/api/auth")
 @Slf4j
 public class AuthController {
-    private final AuthService service;
+    private final UserService service;
     @PostMapping(path = "/login")
     public ResponseEntity<Messenger> login(@RequestBody UserDto param) {
         log.info("입력받은 정보 : {}", param );
         return ResponseEntity.ok(service.login(param));
+    }
+
+    @GetMapping("/exists-username")
+    public ResponseEntity<Boolean> existsByUsername(@RequestParam("username") String username){
+        log.info("입력받은 정보 : {}", username );
+        return ResponseEntity.ok(service.existsByUsername(username));
     }
 }

@@ -1,6 +1,8 @@
 package com.kubernetesdemo.awsuser.common.component.security;
 
 import com.kubernetesdemo.awsuser.user.model.UserDto;
+import com.kubernetesdemo.awsuser.user.repository.UserRepository;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -14,6 +16,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.Date;
+import java.util.stream.Stream;
 
 @Log4j2
 @Component
@@ -23,7 +26,8 @@ public class JwtProvider {
     private final SecretKey secretKey;
     Instant expiredDate = Instant.now().plus(1, ChronoUnit.DAYS);
 
-    public JwtProvider(@Value("${jwt.secret}") String secretKey){
+
+    public JwtProvider(@Value("${jwt.secret}") String secretKey) {
         this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(secretKey));
     }
 
@@ -34,9 +38,9 @@ public class JwtProvider {
                 .signWith(secretKey)
                 .expiration(Date.from(expiredDate))
                 .subject("rod")
-                .claim("userId", user.getId())
+                .claim("id", user.getId())
                 .claim("username", user.getUsername())
-                .claim("job",user.getJob())
+                .claim("job", user.getJob())
                 .compact();
 
         log.info("로그인 성공으로 발급된 토큰" + token);
@@ -45,23 +49,26 @@ public class JwtProvider {
     }
 
     public String extractTokenFromHeader(HttpServletRequest request) {
+        log.info("프론트에서 넘어온 Request getServletPath 값 : {}", request.getServletPath());
         String bearerToken = request.getHeader("Authorization");
-
-        if(bearerToken != null && bearerToken.startsWith("Bearer")) {
-            return bearerToken.substring(7);
-        }
-        return null;
+        log.info("프론트에서 넘어온 토큰 {}", bearerToken);
+        return bearerToken != null && bearerToken.startsWith("Bearer ") ? bearerToken.substring(7) : "undefined";
     }
 
-    public String getPayload(String accessToken) {
+    public String printPayload(String accessToken) {
         String[] chunks = accessToken.split("\\.");
         Base64.Decoder decoder = Base64.getDecoder();
         String header = new String(decoder.decode(chunks[0]));
         String payload = new String(decoder.decode(chunks[1]));
 
-        log.info("Token header : " +  header);
-        log.info("Token payload : " +  payload);
+        log.info("Token header : " + header);
+        log.info("Token payload : " + payload);
 
         return payload;
     }
+
+    public Claims getPayload(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
+    }
+
 }
