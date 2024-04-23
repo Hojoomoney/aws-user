@@ -1,9 +1,10 @@
-package com.kubernetesdemo.awsuser.common.component;
+package com.kubernetesdemo.awsuser.common.component.security;
 
 import com.kubernetesdemo.awsuser.user.model.UserDto;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Base64;
 import java.util.Date;
 
 @Log4j2
@@ -28,6 +30,7 @@ public class JwtProvider {
     public String createToken(UserDto user) {
 
         String token = Jwts.builder()
+                .issuer(issuer)
                 .signWith(secretKey)
                 .expiration(Date.from(expiredDate))
                 .subject("rod")
@@ -39,5 +42,26 @@ public class JwtProvider {
         log.info("로그인 성공으로 발급된 토큰" + token);
 
         return token;
+    }
+
+    public String extractTokenFromHeader(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+
+        if(bearerToken != null && bearerToken.startsWith("Bearer")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
+    public String getPayload(String accessToken) {
+        String[] chunks = accessToken.split("\\.");
+        Base64.Decoder decoder = Base64.getDecoder();
+        String header = new String(decoder.decode(chunks[0]));
+        String payload = new String(decoder.decode(chunks[1]));
+
+        log.info("Token header : " +  header);
+        log.info("Token payload : " +  payload);
+
+        return payload;
     }
 }

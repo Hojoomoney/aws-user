@@ -26,7 +26,7 @@ public class AuthServiceImpl implements AuthService{
 
         return Messenger.builder()
                 .message(flag ? "SUCCESS" : "FAILURE")
-                .token(flag ? createToken(dto) : "none")
+                .accessToken(flag ? createToken(dto) : "none")
                 .build();
     }
 

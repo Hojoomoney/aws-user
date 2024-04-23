@@ -1,4 +1,4 @@
-package com.kubernetesdemo.awsuser.common.component;
+package com.kubernetesdemo.awsuser.common.component.pagination;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

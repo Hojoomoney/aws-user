@@ -1,6 +1,6 @@
 package com.kubernetesdemo.awsuser.user.service;
 
-import com.kubernetesdemo.awsuser.common.component.JwtProvider;
+import com.kubernetesdemo.awsuser.common.component.security.JwtProvider;
 import com.kubernetesdemo.awsuser.common.component.Messenger;
 import com.kubernetesdemo.awsuser.user.model.User;
 import com.kubernetesdemo.awsuser.user.model.UserDto;
@@ -121,23 +121,18 @@ public class UserServiceImpl implements UserService {
         User user = repository.findByUsername(dto.getUsername()).get();
         boolean flag = dto.getPassword().equals(user.getPassword());
 
-        String token = jwtProvider.createToken(entityToDto(user));
-        String[] chunks = token.split("\\.");
-        Base64.Decoder decoder = Base64.getDecoder();
+        String accessToken = jwtProvider.createToken(entityToDto(user));
+        repository.modifyTokenById(user.getId(), accessToken);
 
-        repository.modifyTokenById(user.getId(),token);
-
-        String header = new String(decoder.decode(chunks[0]));
-        String payload = new String(decoder.decode(chunks[1]));
-
-        log.info("Token header : " +  header);
-        log.info("Token payload : " +  payload);
-
+        jwtProvider.getPayload(accessToken);
+        log.info("Flag : " + flag);
         return Messenger.builder()
                 .message(flag ? "SUCCESS" : "FAILURE")
-                .token(flag ? token : "none")
+                .accessToken(flag ? accessToken : "none")
                 .build();
     }
+
+
 
     @Override
     public Boolean existsByUsername(String username) {
