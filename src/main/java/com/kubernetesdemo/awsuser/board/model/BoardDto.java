@@ -20,6 +20,7 @@ import java.util.List;
 public class BoardDto {
     private Long id;
     private String title;
+    private String content;
     private String description;
     private LocalDateTime regDate;
     private LocalDateTime modDate;

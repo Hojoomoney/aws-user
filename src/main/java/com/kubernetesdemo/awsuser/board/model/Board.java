@@ -19,6 +19,7 @@ public class Board extends BaseEntity {
     private Long id;
     @Setter
     private String title;
+    private String content;
     @Setter
     private String description;
 

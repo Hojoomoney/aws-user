@@ -15,6 +15,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     Boolean existsByUsername(String username);
 
+
+
     @Modifying
     @Query("update users set token = :token where id = :id")
     void modifyTokenById(@Param("id") Long id, @Param("token") String token);

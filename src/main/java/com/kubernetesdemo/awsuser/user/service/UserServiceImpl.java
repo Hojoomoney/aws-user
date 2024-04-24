@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -139,8 +138,12 @@ public class UserServiceImpl implements UserService {
         return repository.existsByUsername(username);
     }
 
+    @Transactional
     @Override
-    public Boolean logout(Long id) {
-        return true;
+    public Boolean logout(String accessToken) {
+        Long id = jwtProvider.getPayload(accessToken.substring(7)).get("id", Long.class);
+        log.info("id : {}", id);
+        repository.modifyTokenById(id, "");
+        return repository.findById(id).get().getToken().isEmpty();
     }
 }
