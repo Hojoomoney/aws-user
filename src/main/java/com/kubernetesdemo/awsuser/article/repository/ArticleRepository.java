@@ -12,7 +12,7 @@ import java.util.Map;
 @Repository
 public interface ArticleRepository extends JpaRepository<Article,Long> {
     // JPQL default방식
-    @Query("select a from articles a where a.board.id = :boardId")
+    @Query("select a from articles a where a.board.id = :boardId order by a.id desc")
     public List<Article> getArticlesByBoardId(@Param("boardId") Long boardId);
 //    @Query(value = "select * from articles a where a.board_id = :boardId", nativeQuery = true)
 //    public List<Map<String, Object>> getQanArticles(@Param("boardId") Long boardId);
@@ -25,4 +25,6 @@ public interface ArticleRepository extends JpaRepository<Article,Long> {
 //    @Query("select " + articleDtoMapping + " from articles a where a.board.id = :boardId")
 //    public List<Article> getArticlesDTOsByBoardId(@Param("boardId") Long boardId);
     Boolean existsByTitle(String title);
+
+    List<Article> findAllByOrderByIdDesc();
 }

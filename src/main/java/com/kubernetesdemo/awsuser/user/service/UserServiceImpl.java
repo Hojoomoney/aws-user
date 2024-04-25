@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> findAll() throws SQLException {
-        return repository.findAll().stream().map(this::entityToDto).toList();
+        return repository.findAllByOrderById().stream().map(this::entityToDto).toList();
     }
 
     @Override

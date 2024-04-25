@@ -5,7 +5,9 @@ import com.kubernetesdemo.awsuser.article.model.ArticleDto;
 import com.kubernetesdemo.awsuser.article.repository.ArticleRepository;
 import com.kubernetesdemo.awsuser.board.repository.BoardRepository;
 import com.kubernetesdemo.awsuser.common.component.Messenger;
+import com.kubernetesdemo.awsuser.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -13,17 +15,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepository repository;
     private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
 
     @Override
     public Messenger save(ArticleDto t) throws SQLException {
-        repository.save(dtoToEntity(t,boardRepository));
+        Article ent = repository.save(dtoToEntity(t,boardRepository, userRepository));
         return Messenger.builder()
                 .message(repository.existsByTitle(t.getTitle()) ? "SUCCESS"  : "FAILURE")
+                .id(ent.getBoard().getId())
                 .build();
     }
 
@@ -48,7 +53,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<ArticleDto> findAll() throws SQLException {
-        return repository.findAll().stream().map(this::entityToDto).collect(Collectors.toList());
+        return repository.findAllByOrderByIdDesc().stream().map(this::entityToDto).collect(Collectors.toList());
     }
 
 

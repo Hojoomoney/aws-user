@@ -6,6 +6,7 @@ import com.kubernetesdemo.awsuser.board.model.Board;
 import com.kubernetesdemo.awsuser.board.repository.BoardRepository;
 import com.kubernetesdemo.awsuser.common.service.CommandService;
 import com.kubernetesdemo.awsuser.common.service.QueryService;
+import com.kubernetesdemo.awsuser.user.repository.UserRepository;
 
 import java.util.List;
 
@@ -14,12 +15,12 @@ public interface ArticleService extends CommandService<ArticleDto>, QueryService
 
     List<ArticleDto> findArticlesByTitle(String title);
     List<ArticleDto> findArticlesByContent(String content);
-    default Article dtoToEntity(ArticleDto dto, BoardRepository repository){    //dto 를 entity로 바꾸는 것
+    default Article dtoToEntity(ArticleDto dto, BoardRepository boardRepository, UserRepository userRepository){    //dto 를 entity로 바꾸는 것
         return Article.builder()
-                .id(dto.getId())
                 .title(dto.getTitle())
                 .content(dto.getContent())
-                .board(repository.findById(dto.getBoardId()).orElseThrow(null))
+                .board(boardRepository.findById(dto.getBoardId()).orElseThrow(null))
+                .writer(userRepository.findById(dto.getWriterId()).orElseThrow(null))
                 .build();
     }
 
